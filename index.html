@@ -1,0 +1,228 @@
+<!DOCTYPE html>
+<html lang="pl" data-bs-theme="dark">
+    <head>
+        <meta charset="utf-8" />
+        <meta name="viewport" content="width=device-width, initial-scale=1" />
+        <title>Skat</title>
+        <link rel="stylesheet" href="bootstrap.min.css" type="text/css" />
+        <style type="text/css">
+            @font-face {
+                font-family: 'Card Characters';
+                src: url("card.ttf");
+            }
+            @font-face {
+                font-family: 'Capsa';
+                font-style: normal;
+                src: url("Capsa-Roman.otf");
+            }
+            @font-face {
+                font-family: 'Capsa';
+                font-style: italic;
+                src: url("Capsa-Italic.otf");
+            }
+            * {
+                font-family: 'Capsa';
+            }
+            .card-text {
+                font-family: 'Card Characters';
+                font-size: 36px;
+            }
+            .card-text-red {
+                color: #ff0000;
+            }
+            #step-1, #step-2, #step-3, #step-4 {
+                font-size: 20px;
+            }
+        </style>
+    </head>
+    <body class="d-flex flex-column min-vh-100">
+        <main role="main" class="container">
+            <div id="step-1">
+                <!--p class="card-text card-text-red">{}[] HSDC</p-->
+                <div class="d-flex justify-content-center" style="margin-bottom: 10px; margin-top: 30px;">
+                    <input type="checkbox" class="btn-check" id="i-jc" />
+                    <label class="btn card-text" for="i-jc">J]</label>
+                    <input type="checkbox" class="btn-check" id="i-js" />
+                    <label class="btn card-text" for="i-js">J}</label>
+                    <input type="checkbox" class="btn-check" id="i-jh" />
+                    <label class="btn card-text card-text-red" for="i-jh">J{</label>
+                    <input type="checkbox" class="btn-check" id="i-jd" />
+                    <label class="btn card-text card-text-red" for="i-jd">J[</label>
+                </div>
+                <div class="d-flex justify-content-center">
+                    <input type="checkbox" class="btn-check" id="i-a" />
+                    <label class="btn card-text" for="i-a">A</label>
+                    <input type="checkbox" class="btn-check" id="i-t" />
+                    <label class="btn card-text" for="i-t">=</label>
+                    <input type="checkbox" class="btn-check" id="i-k" />
+                    <label class="btn card-text" for="i-k">K</label>
+                    <input type="checkbox" class="btn-check" id="i-q" />
+                    <label class="btn card-text" for="i-q">Q</label>
+                    <input type="checkbox" class="btn-check" id="i-9" />
+                    <label class="btn card-text" for="i-9">9</label>
+                    <input type="checkbox" class="btn-check" id="i-8" />
+                    <label class="btn card-text" for="i-8">8</label>
+                    <input type="checkbox" class="btn-check" id="i-7" />
+                    <label class="btn card-text" for="i-7">7</label>
+                </div>
+            </div>
+            <div id="step-2" style="display: none; margin-top: 30px;" class="text-center">
+                <input class="form-check-input" type="radio" name="suit" id="s-gr" checked="checked" />
+                <label class="form-check-label" for="s-gr">Grand</label><br /><br />
+                <input class="btn-check" type="radio" name="suit" id="s-c" />
+                <label class="btn card-text" for="s-c">]</label>
+                <input class="btn-check" type="radio" name="suit" id="s-s" />
+                <label class="btn card-text" for="s-s">}</label>
+                <input class="btn-check" type="radio" name="suit" id="s-h" />
+                <label class="btn card-text card-text-red" for="s-h">{</label>
+                <input class="btn-check" type="radio" name="suit" id="s-d" />
+                <label class="btn card-text card-text-red" for="s-d">[</label>
+            </div>
+            <div id="step-3" style="display: none; margin-top: 30px;" class="text-center">
+                <input class="form-check-input" type="checkbox" value="" id="a-h" onchange="handChange();" />
+                <label class="form-check-label" for="a-h">z ręki</label><br />
+                <input class="form-check-input" type="checkbox" value="" id="a-schneider-a" onchange="scaChange();" />
+                <label class="form-check-label" for="a-schneider-a">schneider (&leq; 30 pkt.) ogłoszony</label><br />
+                <input class="form-check-input" type="checkbox" value="" id="a-schwarz-a" onchange="saChange();" />
+                <label class="form-check-label" for="a-schwarz-a">schwarz (bez lew) ogłoszony</label><br />
+                <input class="form-check-input" type="checkbox" value="" id="a-ouvert" disabled="" />
+                <label class="form-check-label" for="a-ouvert"><i>ouvert</i></label>
+                <hr />
+                <input class="form-check-input" type="checkbox" value="" id="a-schneider" />
+                <label class="form-check-label" for="a-schneider">schneider (&leq; 30 pkt.)</label><br />
+                <input class="form-check-input" type="checkbox" value="" id="a-schwarz" onchange="sChange();" />
+                <label class="form-check-label" for="a-schwarz">schwarz (bez lew)</label><br />
+            </div>
+            <div id="step-4" style="display: none; margin-top: 30px;" class="text-center">
+                <p>Wynik:</p><span id="score" style="font-size: 64px;">324</span>
+            </div>
+        </main>
+        
+        <footer class="fixed-bottom" style="margin-bottom: 10px;">
+            <div class="container">
+            <button style="width: 50%;" class="btn btn-outline" onclick="prevStep();">&larr; Wróć</button><button style="width: 50%;" class="btn btn-outline" onclick="nextStep();">Dalej &rarr;</button>
+        </div></footer>
+        <script src="bootstrap.bundle.min.js" type="text/javascript"></script>
+        <script type="text/javascript">
+            var step = 1, Trumps = ["i-jc", "i-js", "i-jh", "i-jd", "i-a", "i-t", "i-k", "i-q", "i-9", "i-8", "i-7"];
+            function g(x) { return document.getElementById(x); }
+            function ic(x) { return g(x).checked; }
+            function c(x) { g(x).checked = true; }
+            function u(x) { g(x).checked = false; }
+            function d(x) { g(x).disabled = true; }
+            function ud(x) { u(x); d(x); }
+            function e(x) { g(x).disabled = false; }
+            function cd(x) { c(x); d(x); }
+            function hide(element) {
+                g(element).style.display = "none";
+            }
+            function processStep() {
+                if (step == 1) {
+                    hide("step-2");
+                    hide("step-3");
+                    g("step-1").style.display = "";
+                    hide("step-4");
+                } else if (step == 2) {
+                    hide("step-1");
+                    hide("step-3");
+                    g("step-2").style.display = "block";
+                    hide("step-4");
+                } else if (step == 3) {
+                    hide("step-1");
+                    hide("step-2");
+                    g("step-3").style.display = "block";
+                    hide("step-4");
+                } else if (step == 4) {
+                    hide("step-1");
+                    hide("step-2");
+                    hide("step-3");
+                    g("step-4").style.display = "block";
+                }
+            }
+            function prevStep() {
+                if (step != 1) {
+                    step--;
+                    processStep();
+                }
+            }
+            function nextStep() {
+                if (step != 4) {
+                    step++;
+                    processStep();
+                }
+                if (step == 4)
+                    calculate();
+            }
+            function handChange() {
+                if (!ic("a-h")) {
+                    ud("a-schneider-a");
+                    ud("a-schwarz-a");
+                    ud("a-ouvert");
+                } else {
+                    e("a-schneider-a");
+                    e("a-schwarz-a");
+                    e("a-ouvert");
+                }
+                scaChange();
+                saChange();
+                sChange();
+            }
+            function saChange() {
+                if (ic("a-schwarz-a")) {
+                    cd("a-schneider-a");
+                    cd("a-schneider");
+                    cd("a-schwarz");
+                    e("a-ouvert");
+                } else {
+                    if (ic("a-h"))
+                        e("a-schneider-a");
+                    e("a-schneider");
+                    e("a-schwarz");
+                    d("a-ouvert");
+                }
+            }
+            function sChange() {
+                if (ic("a-schwarz"))
+                    cd("a-schneider");
+                else
+                    e("a-schneider");
+            }
+            function scaChange() {
+                if (ic("a-schneider-a"))
+                    cd("a-schneider");
+                else
+                    e("a-schneider");
+            }
+            function calculate() {
+                var score = 1;
+
+				for (i = 0; i < 11; i++) {
+					if (ic(Trumps[i])) score++;
+					else break;
+				}
+				if (!ic("i-jc")) {
+					score++;
+					for (i = 1; i < 11; i++) {
+						if (!ic(Trumps[i])) score++;
+						else break;
+					}
+				}
+
+				if (ic("a-h")) score++;
+				if (ic("a-schneider")) score++;
+				if (ic("a-schwarz")) score++;
+				if (ic("a-schneider-a")) score++;
+				if (ic("a-schwarz-a")) score++;
+                if (ic("a-ouvert")) score++;
+
+				if (ic("s-c")) score *= 12;
+				else if (ic("s-s")) score *= 11;
+				else if (ic("s-h")) score *= 10;
+				else if (ic("s-d")) score *= 9;
+				else if (ic("s-gr")) score *= 24;
+				g("score").innerText = score.toString();
+            }
+            handChange();
+        </script>
+    </body>
+</html>
